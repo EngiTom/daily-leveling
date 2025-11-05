@@ -3,12 +3,23 @@ import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, firestore
 import datetime
+import json
 
-# ---------- Setup Firestore ----------
+# --- FIX START ---
+firebase_config = st.secrets["firebase"]
+if isinstance(firebase_config, str):
+    # Streamlit may load as a string literal
+    firebase_config = json.loads(firebase_config.replace("'", '"'))
+# --- FIX END ---
+
 if not firebase_admin._apps:
-    cred = credentials.Certificate(st.secrets["firebase"])
+    cred = credentials.Certificate(firebase_config)
     firebase_admin.initialize_app(cred)
+
 db = firestore.client()
+
+# Example sanity check
+st.write("Firestore initialized ✅")
 
 def get_today():
     return datetime.date.today().isoformat()
