@@ -5,12 +5,7 @@ from firebase_admin import credentials, firestore
 import datetime
 import json
 
-# --- FIX START ---
-firebase_config = st.secrets["firebase"]
-if isinstance(firebase_config, str):
-    # Streamlit may load as a string literal
-    firebase_config = json.loads(firebase_config.replace("'", '"'))
-# --- FIX END ---
+firebase_config = json.loads(st.secrets["firebase"])
 
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
