@@ -76,7 +76,7 @@ user_data = {
     "custom_tasks": []
 }
     
-new_user_data = {**user_data.tasks, **st.session_state.last_saved}
+new_user_data = {**user_data, **st.session_state.last_saved}
 tasks = new_user_data["tasks"]
 custom_tasks = new_user_data["custom_tasks"]
 
