@@ -118,7 +118,7 @@ for task, old_value in tasks.items():
         current, max_value = tasks[task]
         new_value = st.number_input(
             task, 
-            value=int(old_value), 
+            value=int(current), 
             min_value=0, 
             max_value=int(max_value), step=1, 
             key=f"{username}_{task}")
