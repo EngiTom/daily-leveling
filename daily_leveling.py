@@ -115,9 +115,13 @@ for task, old_value in tasks.items():
         done = st.checkbox(task, value=tasks[task], key=f"{username}_{task}")
         tasks[task] = done
     elif isinstance(tasks[task], (tuple, list)):
-        max_value = old_value[1]
-        old_value = old_value[0]
-        new_value = st.number_input(task, value=int(old_value), min_value=0, max_value=max_value, step=1, key=f"{username}_{task}")
+        current, max_value = tasks[task]
+        new_value = st.number_input(
+            task, 
+            value=int(old_value), 
+            min_value=0, 
+            max_value=int(max_value), step=1, 
+            key=f"{username}_{task}")
         if new_value != old_value:
             # Update local state and Firestore
             tasks[task] = (new_value, max_value)
