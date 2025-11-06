@@ -12,7 +12,6 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-st.write("Firestore initialized ✅")
 
 # ---------- Helper functions ----------
 def get_today():
@@ -66,6 +65,7 @@ else:
                   "Read 15 min": False, 
                   "Guitar + Singing": False,
                   "Writing": False,
+                  "Draw": False,
                   "Plan tomorrow": False
                   },
         "custom_tasks": []
@@ -105,7 +105,6 @@ if st.button("Add Task") and new_task.strip():
 
 # Save progress automatically
 doc_ref.set({"tasks": tasks, "custom_tasks": custom_tasks})
-st.success("Progress saved to Firestore!")
 
 # ---------- History viewer ----------
 with st.expander("📆 View task history"):
