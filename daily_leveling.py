@@ -50,7 +50,7 @@ def calc_score(data):
     for val in data['tasks'].values():
         if isinstance(val, bool) and val:
             done += 1 
-        elif isinstance(val, tuple(int, int)) and val[0] >= val[1]:
+        elif isinstance(val, tuple) and val[0] >= val[1]:
             done += 1
     return done, total
 
@@ -113,7 +113,7 @@ for task, old_value in tasks.items():
     if isinstance(tasks[task], bool):
         done = st.checkbox(task, value=tasks[task], key=f"{username}_{task}")
         tasks[task] = done
-    elif isinstance(tasks[task], tuple(int, int)):
+    elif isinstance(tasks[task], tuple):
         max_value = old_value[1]
         old_value = old_value[0]
         new_value = st.number_input(task, value=int(old_value), min_value=0, max_value=max_value, step=1, key=f"{username}_{task}")
