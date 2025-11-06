@@ -4,6 +4,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import datetime
 import json
+from zoneinfo import ZoneInfo
 
 # ---------- Firestore setup ----------
 firebase_config = json.loads(st.secrets["firebase"])
@@ -12,10 +13,11 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+pacific = ZoneInfo("America/Los_Angeles")
 
 # ---------- Helper functions ----------
 def get_today():
-    return datetime.date.today().isoformat()
+    return datetime.now(pacific).date().isoformat()
 
 def get_streak(username):
     """Compute consecutive streak of days where all default tasks were completed."""
@@ -31,7 +33,7 @@ def get_streak(username):
     if not completed_days:
         return 0
 
-    today = datetime.date.today()
+    today = datetime.now(pacific).date()
     streak = 0
     for i in range(len(completed_days) - 1, -1, -1):
         day = datetime.date.fromisoformat(completed_days[i])
