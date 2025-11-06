@@ -162,7 +162,7 @@ with st.expander("📆 View task history"):
 
     if history:
         for day, done, total in history:
-            grade = calc_grade(done, total)
+            grade = calc_grade(data)
             st.write(f"{day}: {grade}: {done}/{total} default tasks completed")
     else:
         st.info("No history yet — complete a few days to see your streak!")
