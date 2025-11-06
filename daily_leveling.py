@@ -44,6 +44,30 @@ def get_streak(username):
             break
     return streak
 
+def calc_score(data):
+    total = len(data.get("tasks", {}))
+    done = 0
+    for val in data['tasks'].values():
+        if isinstance(val, bool) and val:
+            done += 1 
+        elif isinstance(val, tuple(int, int)) and val[0] >= val[1]:
+            done += 1
+    return done, total
+
+def calc_grade(done, total):
+    score = float(done) / float(total)
+    if score < 0.7:
+        return "D"
+    if score < 0.8:
+        return "C"
+    if score < 0.9:
+        return "B"
+    if score < 0.95:
+        return "A"
+    if score <= 1.0: 
+        return "S"
+    return "S+"
+
 # ---------- App ----------
 st.title("✅ Daily Leveling")
 
@@ -64,23 +88,24 @@ if "last_saved" not in st.session_state:
         st.session_state.last_saved = {} # empty
 
 user_data = {
-    "tasks": {"100 Push-ups": 0, 
-                "10 mins plank": 0, 
-                "100 Squats": 0,
-                "Drink 8 Glasses of Water": 0,
-                "Read 15 min": 0, 
-                "Guitar + Singing": False,
-                "Writing": False,
-                "Draw": False,
-                },
+    "tasks": {
+        "100 Push-ups": (0, 100), 
+        "10 mins plank": (0, 10), 
+        "100 Squats": (0, 100),
+        "Drink 8 Glasses of Water": (0, 8),
+        "Read 15 min": False, 
+        "Guitar + Singing": False,
+        "Writing": False,
+        "Draw": False,
+        },
     "custom_tasks": []
 }
     
 new_user_data = {**user_data, **st.session_state.last_saved}
 tasks = new_user_data["tasks"]
 custom_tasks = new_user_data["custom_tasks"]
-
-st.subheader(f"Tasks for {today}")
+grade = calc_grade(calc_score(new_user_data))
+st.subheader(f"Tasks for {today}, Grade: {grade}")
 st.caption(f"🔥 Current streak: {get_streak(username)} day(s)")
 
 # Default tasks
@@ -88,11 +113,13 @@ for task, old_value in tasks.items():
     if isinstance(tasks[task], bool):
         done = st.checkbox(task, value=tasks[task], key=f"{username}_{task}")
         tasks[task] = done
-    elif isinstance(tasks[task], (int, float)):
-        new_value = st.number_input(task, value=float(old_value), step=1.0, key=f"{username}_{task}")
+    elif isinstance(tasks[task], tuple(int, int)):
+        max_value = old_value[1]
+        old_value = old_value[0]
+        new_value = st.number_input(task, value=int(old_value), min_value=0, max_value=max_value, step=1, key=f"{username}_{task}")
         if new_value != old_value:
             # Update local state and Firestore
-            tasks[task] = new_value
+            tasks[task] = (new_value, max_value)
             new_user_data['tasks'] = tasks
             doc_ref.set(new_user_data)
             st.session_state.last_saved = new_user_data
@@ -128,14 +155,14 @@ with st.expander("📆 View task history"):
     for doc in docs:
         data = doc.to_dict()
         if data:
-            total = len(data.get("tasks", {}))
-            done = sum(1 for v in data["tasks"].values() if v)
+            done, total = calc_score(data)
             history.append((doc.id, done, total))
     history.sort(reverse=True)
 
     if history:
         for day, done, total in history:
-            st.write(f"{day}: {done}/{total} default tasks completed")
+            grade = calc_grade(done, total)
+            st.write(f"{day}: {grade}: {done}/{total} default tasks completed")
     else:
         st.info("No history yet — complete a few days to see your streak!")
 
