@@ -55,35 +55,47 @@ today = get_today()
 doc_ref = db.collection("tasks").document(username).collection("days").document(today)
 
 # Load or initialize today
-doc = doc_ref.get()
-if doc.exists:
-    user_data = doc.to_dict()
-else:
-    user_data = {
-        "tasks": {"100 Push-ups": False, 
-                  "10 mins plank": False, 
-                  "100 Squats": False,
-                  "Drink 8 Glasses of Water": False,
-                  "Read 15 min": False, 
-                  "Guitar + Singing": False,
-                  "Writing": False,
-                  "Draw": False,
-                  "Plan tomorrow": False
-                  },
-        "custom_tasks": []
-    }
-    doc_ref.set(user_data)
+if "last_saved" not in st.session_state:
+    doc = doc_ref.get()
+    if doc.exists:
+        user_data = doc.to_dict()
+        st.session_state.last_saved = doc.to_dict()
+    else:
+        st.session_state.last_saved = {} # empty
 
-tasks = user_data["tasks"]
-custom_tasks = user_data["custom_tasks"]
+user_data = {
+    "tasks": {"100 Push-ups": 0, 
+                "10 mins plank": 0, 
+                "100 Squats": 0,
+                "Drink 8 Glasses of Water": 0,
+                "Read 15 min": 0, 
+                "Guitar + Singing": False,
+                "Writing": False,
+                "Draw": False,
+                },
+    "custom_tasks": []
+}
+    
+new_user_data = {**user_data.tasks, **st.session_state.last_saved}
+tasks = new_user_data["tasks"]
+custom_tasks = new_user_data["custom_tasks"]
 
 st.subheader(f"Tasks for {today}")
 st.caption(f"🔥 Current streak: {get_streak(username)} day(s)")
 
 # Default tasks
-for task in list(tasks.keys()):
-    done = st.checkbox(task, value=tasks[task], key=f"{username}_{task}")
-    tasks[task] = done
+for task, old_value in tasks.items():
+    if type(tasks[task]) == bool:
+        done = st.checkbox(task, value=tasks[task], key=f"{username}_{task}")
+        tasks[task] = done
+    if type(tasks(task)) == float:
+        new_value = st.number_input(task, value=float(old_value), step=1.0, key=task)
+        if new_value != old_value:
+            # Update local state and Firestore
+            tasks[task] = new_value
+            new_user_data['tasks'] = tasks
+            doc_ref.set(new_user_data)
+            st.session_state.last_saved = new_user_data
 
 # Custom tasks (side-by-side layout)
 st.markdown("### Custom Tasks")
