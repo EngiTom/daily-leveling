@@ -59,7 +59,15 @@ if doc.exists:
     user_data = doc.to_dict()
 else:
     user_data = {
-        "tasks": {"Exercise": False, "Read 15 min": False, "Plan tomorrow": False},
+        "tasks": {"100 Push-ups": False, 
+                  "10 mins plank": False, 
+                  "100 Squats": False,
+                  "Drink 8 Glasses of Water": False,
+                  "Read 15 min": False, 
+                  "Guitar + Singing": False,
+                  "Writing": False,
+                  "Plan tomorrow": False
+                  },
         "custom_tasks": []
     }
     doc_ref.set(user_data)
