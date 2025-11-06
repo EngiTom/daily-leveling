@@ -54,7 +54,8 @@ def calc_score(data):
             done += 1
     return done, total
 
-def calc_grade(done, total):
+def calc_grade(data):
+    done, total = calc_score(data)
     score = float(done) / float(total)
     if score < 0.7:
         return "D"
@@ -104,7 +105,7 @@ user_data = {
 new_user_data = {**user_data, **st.session_state.last_saved}
 tasks = new_user_data["tasks"]
 custom_tasks = new_user_data["custom_tasks"]
-grade = calc_grade(calc_score(new_user_data))
+grade = calc_grade(new_user_data)
 st.subheader(f"Tasks for {today}, Grade: {grade}")
 st.caption(f"🔥 Current streak: {get_streak(username)} day(s)")
 
