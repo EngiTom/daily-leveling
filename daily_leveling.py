@@ -45,7 +45,7 @@ def get_streak(username):
     return streak
 
 # ---------- App ----------
-st.title("✅ Daily Checklist (Firestore Edition)")
+st.title("✅ Daily Leveling")
 
 username = st.text_input("Enter your username:")
 if not username:
