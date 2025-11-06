@@ -85,10 +85,10 @@ st.caption(f"🔥 Current streak: {get_streak(username)} day(s)")
 
 # Default tasks
 for task, old_value in tasks.items():
-    if type(tasks[task]) == bool:
+    if isinstance(tasks[task], bool):
         done = st.checkbox(task, value=tasks[task], key=f"{username}_{task}")
         tasks[task] = done
-    if type(tasks[task]) == float:
+    elif isinstance(tasks[task], (int, float)):
         new_value = st.number_input(task, value=float(old_value), step=1.0, key=f"{username}_{task}")
         if new_value != old_value:
             # Update local state and Firestore
