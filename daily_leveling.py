@@ -38,7 +38,7 @@ def get_streak(username):
     for i in range(len(completed_days) - 1, -1, -1):
         day = date.fromisoformat(completed_days[i])
         # count backward consecutive days including today if applicable
-        if today - day == datetime.timedelta(days=streak):
+        if today - day == timedelta(days=streak):
             streak += 1
         else:
             break
