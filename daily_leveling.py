@@ -2,7 +2,7 @@
 import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, firestore
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import json
 from zoneinfo import ZoneInfo
 
@@ -36,7 +36,7 @@ def get_streak(username):
     today = datetime.now(pacific).date()
     streak = 0
     for i in range(len(completed_days) - 1, -1, -1):
-        day = datetime.date.fromisoformat(completed_days[i])
+        day = date.fromisoformat(completed_days[i])
         # count backward consecutive days including today if applicable
         if today - day == datetime.timedelta(days=streak):
             streak += 1
