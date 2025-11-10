@@ -91,13 +91,14 @@ if "last_saved" not in st.session_state:
 user_data = {
     "tasks": {
         "100 Push-ups": (0, 100), 
-        "10 mins plank": (0, 10), 
         "100 Squats": (0, 100),
         "Drink 8 Glasses of Water": (0, 8),
         "Read 15 min": False, 
         "Guitar + Singing": False,
         "Writing": False,
         "Draw": False,
+        "Read News": False,
+        "Eye exercise": False
         },
     "custom_tasks": []
 }
